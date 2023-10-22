@@ -12,7 +12,7 @@ export class QrService {
   ) {}
 
   async getAll() {
-    return await this.ticketRepo.find();
+    return await this.ticketRepo.find({ where: { is_active: true } });
   }
 
   async createBulk() {
@@ -33,7 +33,9 @@ export class QrService {
   async findOne(id: string) {
     console.log({ id });
 
-    const ticket = await this.ticketRepo.findOne({ where: { name: id } });
+    const ticket = await this.ticketRepo.findOne({
+      where: { name: id, is_active: true },
+    });
 
     if (!ticket) {
       return Promise.reject({
@@ -46,7 +48,9 @@ export class QrService {
   }
 
   async update(id: string, ticketNum: number) {
-    const ticket = await this.ticketRepo.findOne({ where: { name: id } });
+    const ticket = await this.ticketRepo.findOne({
+      where: { name: id, is_active: true },
+    });
 
     if (!ticket) {
       return Promise.reject({
