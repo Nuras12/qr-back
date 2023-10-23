@@ -23,6 +23,9 @@ export class Ticket {
   @Column({ default: true })
   is_active: boolean;
 
+  @Column({ default: false })
+  refunded: boolean;
+
   @CreateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP(6)',

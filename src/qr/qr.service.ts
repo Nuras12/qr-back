@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Ticket } from './entities/qr.entity';
 import { Repository } from 'typeorm';
+import { CreateTicketsDto } from './dto/create-ticket.dto';
 var XLSX = require('xlsx');
 
 @Injectable()
@@ -15,16 +16,16 @@ export class QrService {
     return await this.ticketRepo.find({ where: { is_active: true } });
   }
 
-  async createBulk() {
-    const data = fromXslx();
+  async createBulk(data: CreateTicketsDto) {
 
     const previous = await this.ticketRepo.find();
     this.ticketRepo.save(previous.map((i) => ({ ...i, is_active: false })));
 
-    const toCreate = data.map(({ name, quantity }) => ({
-      name: name,
+    const toCreate = data.tickets.map(({ id, quantity , isRefunded}) => ({
+      name: id,
       available_num: quantity,
       quantity: quantity,
+      refunded: isRefunded
     }));
 
     await this.ticketRepo.save(toCreate);
@@ -41,6 +42,13 @@ export class QrService {
       return Promise.reject({
         statusCode: 404,
         message: 'Ticket not found',
+      });
+    }
+
+    if (ticket.refunded) {
+      return Promise.reject({
+        statusCode: 422,
+        message: 'Ticket refunded',
       });
     }
 
@@ -75,9 +83,3 @@ export class QrService {
   }
 }
 
-function fromXslx(): { name: string; quantity: number }[] {
-  var workbook = XLSX.readFile('master.xlsx');
-  var sheet_name_list = workbook.SheetNames;
-  var xlData = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]]);
-  return xlData;
-}

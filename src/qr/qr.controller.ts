@@ -11,6 +11,7 @@ import {
 import { QrService } from './qr.service';
 import { UpdateQrCountDto } from './dto/update-qr.dto';
 import { AuthGuard } from 'src/guard';
+import { CreateTicketsDto } from './dto/create-ticket.dto';
 
 @Controller('qr')
 export class QrController {
@@ -30,9 +31,8 @@ export class QrController {
 
   @UseGuards(AuthGuard)
   @Post('add')
-  fill() {
-
-    return this.qrService.createBulk();
+  fill(@Body() createDto: CreateTicketsDto) {
+    return this.qrService.createBulk(createDto);
   }
 
   @UseGuards(AuthGuard)
