@@ -17,15 +17,14 @@ export class QrService {
   }
 
   async createBulk(data: CreateTicketsDto) {
-
     const previous = await this.ticketRepo.find();
     this.ticketRepo.save(previous.map((i) => ({ ...i, is_active: false })));
 
-    const toCreate = data.tickets.map(({ id, quantity , isRefunded}) => ({
+    const toCreate = data.tickets.map(({ id, quantity, isRefunded }) => ({
       name: id,
       available_num: quantity,
       quantity: quantity,
-      refunded: isRefunded
+      refunded: isRefunded,
     }));
 
     await this.ticketRepo.save(toCreate);
@@ -55,6 +54,14 @@ export class QrService {
     return { available: ticket.available_num, total: ticket.quantity };
   }
 
+  async findAll() {
+    const tickets = this.ticketRepo.findOne({
+      where: { is_active: true },
+    });
+
+    return tickets;
+  }
+
   async update(id: string, ticketNum: number) {
     const ticket = await this.ticketRepo.findOne({
       where: { name: id, is_active: true },
@@ -82,4 +89,3 @@ export class QrService {
     return;
   }
 }
-

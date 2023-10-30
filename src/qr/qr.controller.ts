@@ -24,6 +24,12 @@ export class QrController {
   }
 
   @UseGuards(AuthGuard)
+  @Get()
+  async findAll() {
+    return await this.qrService.findAll();
+  }
+
+  @UseGuards(AuthGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateQrDto: UpdateQrCountDto) {
     return this.qrService.update(id, updateQrDto.count);
