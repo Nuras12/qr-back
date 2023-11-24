@@ -7,6 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Ticket } from './qr/entities/qr.entity';
+import { KaspiWebhookModule } from './kaspi-webhook/kaspi-webhook.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { Ticket } from './qr/entities/qr.entity';
       },
       inject: [ConfigService],
     }),
+    KaspiWebhookModule,
   ],
   controllers: [AppController],
   providers: [AppService],
